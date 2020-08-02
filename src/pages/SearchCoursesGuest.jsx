@@ -103,19 +103,21 @@ class SearchCourses extends Component {
         applyPreference: false,
         searchedCourse: '',
         toAdd: [],
-        added: []
+        added: [],
+        allAdd: []
       }
       this.radioRef = React.createRef()
     }
 
     componentDidMount(){
         this.setState({dataReceived: true})
+        const newAll = []
         const toAdd = JSON.parse(localStorage.getItem('toAdd'))
         if(toAdd != undefined){
           this.setState({toAdd}, () => {
               toAdd.map(c => {
-                console.log(c)
                 this.searchCourses(c)
+                newAll.push(c)
               })
           })
         }
@@ -123,10 +125,12 @@ class SearchCourses extends Component {
         if(added != undefined){
           this.setState({added}, () => {
               added.map(c => {
+                newAll.push(c.classNmbr)
                 console.log(c)
               })
           })
         }
+        this.setState({allAdd: newAll})
     }
 
     createData(classNmbr, course, section, faculty, day, startTime, endTime, room, capacity, enrolled) {
@@ -211,6 +215,7 @@ class SearchCourses extends Component {
         .then(res => {
             const newSiteData = this.state.siteData; 
             const toAdd = this.state.toAdd;
+            const newAll = this.state.allAdd;
             console.log(res.data)
             res.data.map(bundle => {
               var arranged = groupArray(bundle, 'classnumber');
@@ -247,11 +252,12 @@ class SearchCourses extends Component {
 
                 if(!(this.state.toAdd.includes(Number(classnumber)))){
                   toAdd.push(classnumber)
+                  newAll.push(classnumber)
                 }
                 newSiteData.push(offering);
               }
             })
-          this.setState({siteData: newSiteData, toAdd: toAdd},() => {
+          this.setState({siteData: newSiteData, toAdd: toAdd, allAdd: newAll},() => {
             this.setState({loading: false});
             localStorage.setItem('toAdd', JSON.stringify(toAdd))
             console.log(this.state.toAdd)
@@ -288,19 +294,22 @@ class SearchCourses extends Component {
       this.setState({searchedCourse: ''})
 
     }
+
     enlistButton = () => {
         this.setState({loading: true})
         axios.post('https://archerone-backend.herokuapp.com/api/checkconflicts/', {
-          classnumbers: this.state.toAdd
+          classnumbers: this.state.allAdd
         })
         .then(res => {
           if(res.data){
             console.log("true")
             const newAdded = this.state.siteData
+            const newAll = this.state.allAdd
             this.state.added.map(a => {
               newAdded.push(a)
+              newAll.push(a.classNmbr)
             })
-            this.setState({added: newAdded}, () => {
+            this.setState({added: newAdded, allAdd: newAll}, () => {
               localStorage.setItem('added', JSON.stringify(newAdded))
               localStorage.removeItem('toAdd')
               this.setState({siteData: []})
@@ -309,6 +318,7 @@ class SearchCourses extends Component {
             })
           }else{
             console.log("false")
+            this.setState({loading: false});
           }
         }).catch(err => {
           console.log(err.response)
@@ -317,10 +327,12 @@ class SearchCourses extends Component {
     }
 
     deleteButton = (classnumber) => {
+      const newAll = []
       const newSiteData = []
       this.state.siteData.map(row => {
         if(row.classNmbr != classnumber){
           newSiteData.push(row)
+          newAll.push(row.classNmbr)
         }
       })
       this.setState({siteData: newSiteData})
@@ -328,9 +340,11 @@ class SearchCourses extends Component {
       this.state.toAdd.map(c => {
         if(c != classnumber){
           newToAdd.push(c)
+          newAll.push(c)
         }
       })
       this.setState({toAdd: newToAdd})
+      this.setState({allAdd: newAll})
       localStorage.setItem('toAdd', JSON.stringify(newToAdd))
     }
     dropButton = (classnumber) => {
@@ -341,6 +355,14 @@ class SearchCourses extends Component {
         }
       })
       this.setState({added: newSiteData})
+      const newAll = []
+      this.state.allAdd.map(c => {
+        if(c != classnumber){
+          newAll.push(c)
+        }
+      })
+      this.setState({added: newSiteData})
+      this.setState({allAdd: newAll})
       localStorage.setItem('added', JSON.stringify(newSiteData))
     }
     onChangeSearch = (e) => {
