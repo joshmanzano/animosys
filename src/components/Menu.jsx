@@ -50,7 +50,7 @@ class Menu extends React.Component{
             <Navbar.Brand href="/">
             <img
                 alt=""
-                src="/mydlsu.png"
+                src="/animosys.png"
                 // width="30"
                 height="50"
                 className="d-inline-block align-top"

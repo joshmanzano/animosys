@@ -11,8 +11,7 @@ import TableContainer from '@material-ui/core/TableContainer';
 import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
 import Paper from '@material-ui/core/Paper';
-import Tooltip from '@material-ui/core/Tooltip';
-
+import Grid from '@material-ui/core/Grid';
 import ComboBox from '../components/ComboBox.jsx';
 import axios from 'axios';
 
@@ -36,6 +35,8 @@ import searchIMG from '../assets/search_engine.png';
 import {Modal, ModalHeader, ModalBody, ModalFooter } from 'reactstrap';
 import Switch from '@material-ui/core/Switch';
 import { TextField } from "@material-ui/core";
+import IconButton from '@material-ui/core/IconButton';
+import DeleteIcon from '@material-ui/icons/Delete';
 
 const styles = theme => ({
   root: {
@@ -91,31 +92,41 @@ class SearchCourses extends Component {
         fields: {},
         database: [],
         siteData: [],
-        allSiteData: [],
         selectedCourses: [],
         loading: false,
         radioVal: 'all',
         dataReceived: false,
-        skeletons: [...Array(8).keys()],
+        skeletons: [...Array(2).keys()],
         rowStyle: "",
         openModalCourseInfo: false,
         showPlaceholder: true,
         applyPreference: false,
-        searchedCourse: ''
+        searchedCourse: '',
+        toAdd: [],
+        added: []
       }
       this.radioRef = React.createRef()
     }
 
     componentDidMount(){
-        // axios.get('https://archerone-backend.herokuapp.com/api/courses/')
-        // .then(res => {
-        //     res.data.map(course => {
-        //         var courses = this.state.courseList;
-        //         courses.push({'id':course.id, 'course_code':course.course_code})
-        //         this.setState({courseList: courses, dataReceived: true})
-        //     })
-        // })
         this.setState({dataReceived: true})
+        const toAdd = JSON.parse(localStorage.getItem('toAdd'))
+        if(toAdd != undefined){
+          this.setState({toAdd}, () => {
+              toAdd.map(c => {
+                console.log(c)
+                this.searchCourses(c)
+              })
+          })
+        }
+        const added = JSON.parse(localStorage.getItem('added'))
+        if(added != undefined){
+          this.setState({added}, () => {
+              added.map(c => {
+                console.log(c)
+              })
+          })
+        }
     }
 
     createData(classNmbr, course, section, faculty, day, startTime, endTime, room, capacity, enrolled) {
@@ -128,110 +139,131 @@ class SearchCourses extends Component {
       this.setState({fields});
     }
 
-    setFilter = () => {
-      let option = this.state.radioVal;
-      let filteredList = [];
-
-      if(option == "all"){
-        console.log("all");
-        filteredList = this.state.allSiteData;
-
-        this.setState({siteData: filteredList});
-
-        console.log(filteredList);
-      }
-      else if(option == "open"){
-        console.log("open");
-
-        var i;
-        for(i = 0; i < this.state.allSiteData.length; i++) {
-          if(this.state.allSiteData[i].enrolled < this.state.allSiteData[i].capacity){
-            // console.log(this.state.database[i]);
-            filteredList.push(this.state.allSiteData[i]);
-          }
-        }
-
-        this.setState({siteData: filteredList});
-
-        console.log(filteredList);
-      }
-      else{
-        console.log("closed");
-
-        var i;
-        for(i = 0; i < this.state.allSiteData.length; i++) {
-          if(this.state.allSiteData[i].enrolled >= this.state.allSiteData[i].capacity){
-            // console.log(this.state.database[i]);
-            filteredList.push(this.state.allSiteData[i]);
-          }
-        }
-
-        this.setState({siteData: filteredList});
-
-        console.log(filteredList);
-      }
-    }
-
-    handleFilter = (field, e) => {
-      this.setState({radioVal: e.target.value}, () => {
-        this.setFilter()
-      })
-    }
-
-    searchCourses = () =>{
+    enlistCourses = (c) =>{
       //start loading
 
-      this.setState({loading: true})
-      this.setState({siteData: []})
-      axios.get('https://archerone-backend.herokuapp.com/api/courseofferingslistsingle/'+this.state.searchedCourse.toUpperCase())
-      .then(res => {
-          const newSiteData = [];
-          console.log(res.data)
-          res.data.map(bundle => {
-            var arranged = groupArray(bundle, 'classnumber');
-            console.log(arranged)
-            for (let key in arranged) {
-              console.log(key, arranged[key]);
-              var days = []
-              var day = ''
-              var classnumber = ''
-              var course = ''
-              var section = ''
-              var faculty = ''
-              var timeslot_begin = ''
-              var timeslot_end = ''
-              var room = ''
-              var max_enrolled = ''
-              var current_enrolled = ''
-              arranged[key].map(offering => {
-                days.push(offering.day)
-                classnumber = offering.classnumber
-                course = offering.course
-                section = offering.section
-                faculty = offering.faculty
-                timeslot_begin = offering.timeslot_begin
-                timeslot_end = offering.timeslot_end
-                room = offering.room
-                max_enrolled = offering.max_enrolled
-                current_enrolled = offering.current_enrolled
-              })
-              days.map(day_code => {
-                day += day_code;
-              })
-              const offering = this.createData(classnumber, course, section, faculty, day, timeslot_begin, timeslot_end, room, max_enrolled, current_enrolled);
-              newSiteData.push(offering);
-            }
+
+        this.setState({loading: true})
+        // this.setState({siteData: []})
+        axios.get('https://archerone-backend.herokuapp.com/api/getclass/'+c+'/')
+        .then(res => {
+            const newSiteData = this.state.siteData; 
+            const toAdd = this.state.toAdd;
+            console.log(res.data)
+            res.data.map(bundle => {
+              var arranged = groupArray(bundle, 'classnumber');
+              console.log(arranged)
+              for (let key in arranged) {
+                console.log(key, arranged[key]);
+                var days = []
+                var day = ''
+                var classnumber = ''
+                var course = ''
+                var section = ''
+                var faculty = ''
+                var timeslot_begin = ''
+                var timeslot_end = ''
+                var room = ''
+                var max_enrolled = ''
+                var current_enrolled = ''
+                arranged[key].map(offering => {
+                  days.push(offering.day)
+                  classnumber = offering.classnumber
+                  course = offering.course
+                  section = offering.section
+                  faculty = offering.faculty
+                  timeslot_begin = offering.timeslot_begin
+                  timeslot_end = offering.timeslot_end
+                  room = offering.room
+                  max_enrolled = offering.max_enrolled
+                  current_enrolled = offering.current_enrolled
+                })
+                days.map(day_code => {
+                  day += day_code;
+                })
+                const offering = this.createData(classnumber, course, section, faculty, day, timeslot_begin, timeslot_end, room, max_enrolled, current_enrolled);
+
+                if(!(this.state.toAdd.includes(Number(classnumber)))){
+                  toAdd.push(classnumber)
+                }
+                newSiteData.push(offering);
+              }
+            })
+          this.setState({added: newSiteData},() => {
+            this.setState({loading: false});
+            console.log(this.state.toAdd)
           })
-        this.setState({siteData: newSiteData, allSiteData: newSiteData},() => {
+          //Finish Loading
+        }).catch(err => {
+          console.log(err.response)
           this.setState({loading: false});
         })
-        //Finish Loading
-      }).catch(err => {
-        console.log(err.response)
-        this.setState({loading: false});
-      })
+
     }
 
+    searchCourses = (c) =>{
+      //start loading
+
+
+        this.setState({loading: true})
+        // this.setState({siteData: []})
+        axios.get('https://archerone-backend.herokuapp.com/api/getclass/'+c+'/')
+        .then(res => {
+            const newSiteData = this.state.siteData; 
+            const toAdd = this.state.toAdd;
+            console.log(res.data)
+            res.data.map(bundle => {
+              var arranged = groupArray(bundle, 'classnumber');
+              console.log(arranged)
+              for (let key in arranged) {
+                console.log(key, arranged[key]);
+                var days = []
+                var day = ''
+                var classnumber = ''
+                var course = ''
+                var section = ''
+                var faculty = ''
+                var timeslot_begin = ''
+                var timeslot_end = ''
+                var room = ''
+                var max_enrolled = ''
+                var current_enrolled = ''
+                arranged[key].map(offering => {
+                  days.push(offering.day)
+                  classnumber = offering.classnumber
+                  course = offering.course
+                  section = offering.section
+                  faculty = offering.faculty
+                  timeslot_begin = offering.timeslot_begin
+                  timeslot_end = offering.timeslot_end
+                  room = offering.room
+                  max_enrolled = offering.max_enrolled
+                  current_enrolled = offering.current_enrolled
+                })
+                days.map(day_code => {
+                  day += day_code;
+                })
+                const offering = this.createData(classnumber, course, section, faculty, day, timeslot_begin, timeslot_end, room, max_enrolled, current_enrolled);
+
+                if(!(this.state.toAdd.includes(Number(classnumber)))){
+                  toAdd.push(classnumber)
+                }
+                newSiteData.push(offering);
+              }
+            })
+          this.setState({siteData: newSiteData, toAdd: toAdd},() => {
+            this.setState({loading: false});
+            localStorage.setItem('toAdd', JSON.stringify(toAdd))
+            console.log(this.state.toAdd)
+          })
+          //Finish Loading
+        }).catch(err => {
+          console.log(err.response)
+          this.setState({loading: false});
+        })
+
+    }
+    o
     handleSearch = (e, val) =>{
       this.setState({selectedCourses: val})
     }
@@ -242,40 +274,75 @@ class SearchCourses extends Component {
       }
     }
 
-    handleCloseModalCourseInfo = ()=>{
-      this.setState({openModalCourseInfo: false})
-    }
-  
-    handleOpenModalCourseInfo = (courseCode, courseName, courseUnits)=>{
-      courseName = "Lorem ipsum"
-      var courseDesc = "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum."
-      var coursePre = "N/A"
-      var courseCo = "N/A"
-      var courseEq = "N/A"
-      this.setState({courseCode, courseName, courseUnits})
-      this.setState({courseDesc, coursePre, courseCo, courseEq})
-      this.setState({openModalCourseInfo: true})
-    }
-
-    handleApplyPreference = () => {
-      this.setState({applyPreference: !this.state.applyPreference})
-    }
-  
-    toggleModal = () => {
-      var openModalVar = this.state.openModalCourseInfo;
-      this.setState({openModalCourseInfo: !openModalVar});
-    }
-
     clearButton = () => {
       this.setState({searchedCourse: ''})
 
     }
 
     searchButton = () => {
-      this.searchCourses()
+
+      if(!(this.state.toAdd.includes(Number(this.state.searchedCourse)))){
+        this.searchCourses(this.state.searchedCourse)
+      }
+
+      this.setState({searchedCourse: ''})
 
     }
+    enlistButton = () => {
+        this.setState({loading: true})
+        axios.post('https://archerone-backend.herokuapp.com/api/checkconflicts/', {
+          classnumbers: this.state.toAdd
+        })
+        .then(res => {
+          if(res.data){
+            console.log("true")
+            const newAdded = this.state.siteData
+            this.state.added.map(a => {
+              newAdded.push(a)
+            })
+            this.setState({added: newAdded}, () => {
+              localStorage.setItem('added', JSON.stringify(newAdded))
+              localStorage.removeItem('toAdd')
+              this.setState({siteData: []})
+              this.setState({toAdd: []})
+              this.setState({loading: false})
+            })
+          }else{
+            console.log("false")
+          }
+        }).catch(err => {
+          console.log(err.response)
+          this.setState({loading: false});
+        })
+    }
 
+    deleteButton = (classnumber) => {
+      const newSiteData = []
+      this.state.siteData.map(row => {
+        if(row.classNmbr != classnumber){
+          newSiteData.push(row)
+        }
+      })
+      this.setState({siteData: newSiteData})
+      const newToAdd = []
+      this.state.toAdd.map(c => {
+        if(c != classnumber){
+          newToAdd.push(c)
+        }
+      })
+      this.setState({toAdd: newToAdd})
+      localStorage.setItem('toAdd', JSON.stringify(newToAdd))
+    }
+    dropButton = (classnumber) => {
+      const newSiteData = []
+      this.state.added.map(row => {
+        if(row.classNmbr != classnumber){
+          newSiteData.push(row)
+        }
+      })
+      this.setState({added: newSiteData})
+      localStorage.setItem('added', JSON.stringify(newSiteData))
+    }
     onChangeSearch = (e) => {
       this.setState({searchedCourse: e.target.value})
     }
@@ -309,50 +376,115 @@ class SearchCourses extends Component {
             {this.state.dataReceived ? 
             <div className="search-container">
                 <div className="searchBar">
-                  <h2>Course Offerings</h2>
+                  <h2>Add Classes</h2>
                 </div>
+                <hr class="solid"></hr>
+
+              <span>
+
+                <div>
+                    <div>
+                    <Grid container spacing={1}>
+                      <Grid item xs={12}>
+                      </Grid>
+                      <Grid item xs={4}>
+                        <div className="searchBar">
+                          <div style={{display: "flex", justifyContent: "center"}}>
+                          <TextField value={this.state.searchedCourse} onChange={this.onChangeSearch} margin="dense" label="Class number" variant="outlined"></TextField>
+                          </div>
+                        </div>
+                        <div className="searchBar">
+                          <div style={{display: "flex", justifyContent: "center"}}>
+                            <Button disabled={this.state.loading} onClick={this.searchButton} variant="contained" size="small">Add</Button>
+                          </div>
+                        </div>
+                      </Grid>
+                      <Grid item xs={8}>
+                        <div>
+                          <div style={{display: "flex", justifyContent: "center"}}>
+                          <TableContainer component={Paper}>
+                              <Table aria-label="customized table">
+                                <TableHead>
+                                  <TableRow>
+                                    <StyledTableCell> Delete </StyledTableCell>
+                                    <StyledTableCell> Class </StyledTableCell>
+                                    <StyledTableCell> Day </StyledTableCell>
+                                    <StyledTableCell> Time </StyledTableCell>
+                                    <StyledTableCell> Room </StyledTableCell>
+                                    <StyledTableCell> Status </StyledTableCell>
+                                  </TableRow>
+                                </TableHead>
+                                {this.state.loading ? 
+                                <TableBody>
+                                    {this.state.skeletons.map(skeleton =>(
+                                      <StyledTableRow>
+                                        <StyledTableCell> <Skeleton width={'100%'} height={'100%'}></Skeleton> </StyledTableCell>
+                                        <StyledTableCell> <Skeleton width={'100%'} height={'100%'}></Skeleton> </StyledTableCell>
+                                        <StyledTableCell> <Skeleton width={'100%'} height={'100%'}></Skeleton> </StyledTableCell>
+                                        <StyledTableCell> <Skeleton width={'100%'} height={'100%'}></Skeleton> </StyledTableCell>
+                                        <StyledTableCell> <Skeleton width={'100%'} height={'100%'}></Skeleton> </StyledTableCell>
+                                        <StyledTableCell> <Skeleton width={'100%'} height={'100%'}></Skeleton> </StyledTableCell>
+                                      </StyledTableRow>
+                                    ))}
+                                </TableBody>
+                                : 
+                                <TableBody>
+                                  {this.state.siteData.map(row => (
+                                    <StyledTableRow key={row.classNmbr} style={(row.capacity == row.enrolled) ? {color: "#0099CC"} : {color: "#006600"}}>
+                                      <StyledTableCell>
+                                        <IconButton onClick={() => this.deleteButton(row.classNmbr)} aria-label="delete">
+                                          <DeleteIcon />
+                                        </IconButton> 
+                                      </StyledTableCell>
+                                      <StyledTableCell> {row.course + ' ' + row.section + ' (' + row.classNmbr + ')'} </StyledTableCell>
+                                      <StyledTableCell> {row.day} </StyledTableCell>
+                                      <StyledTableCell> {row.startTime} - {row.endTime} </StyledTableCell>
+                                      <StyledTableCell> {row.room} </StyledTableCell>
+                                      <StyledTableCell style={(row.capacity <= row.enrolled) ? {color: "#0099CC"} : {color: "#006600"}}> {(row.capacity <= row.enrolled) ? "CLOSED" : "OPEN"} </StyledTableCell>
+                                    </StyledTableRow>
+                                  ))}
+                                </TableBody>
+                                }
+                              </Table>
+                            </TableContainer>
+                          </div>
+                        </div>
+
+                        <div className="searchBar">
+                          <div style={{display: "flex", justifyContent: "center"}}>
+                            <Button disabled={this.state.loading} onClick={this.enlistButton} variant="contained" size="small">Enlist</Button>
+                          </div>
+                        </div>
+                      </Grid>
+                    </Grid>
+                    </div>
+                </div>
+
+
+
+
+              </span>
+
                 <hr class="solid"></hr>
 
                 <div className="searchBar">
-                    <div style={{display: "flex", justifyContent: "center"}}>
-                      <TextField value={this.state.searchedCourse} onChange={this.onChangeSearch} margin="dense" label="Course" variant="outlined"></TextField>
-                    </div>
+                  <h2>Your schedule</h2>
                 </div>
-
-                <div style={{display: "flex", justifyContent: "center"}}>
-                  <Button onClick={this.searchButton} variant="contained" size="small">Search</Button>
-                  <Button onClick={this.clearButton} variant="contained" size="small">Clear</Button>
-                </div>
-
-                <hr class="solid"></hr>
-
-                <div className="legend">
-                    <div className="legendItems">
-                        <center>
-                            <div>Open Sections - <Paper style={{backgroundColor:"#006600", height: "15px", width: "15px", display: "inline-flex"}}> </Paper> Green</div> 
-                       </center>
-                    </div>
-                    <div  className="legendItems">
-                        <center>
-                            <div>Closed Sections - <Paper style={{backgroundColor:  "#0099CC", height: "15px", width: "15px", display: "inline-flex"}}> </Paper> Blue</div>
-                        </center>
-                    </div>
-                </div>
-
                 <div className="viewCourses">
                   <TableContainer component={Paper}>
                     <Table aria-label="customized table">
                       <TableHead>
                         <TableRow>
-                          <StyledTableCell> Class Number </StyledTableCell>
-                          <StyledTableCell> Course </StyledTableCell>
-                          <StyledTableCell> Section </StyledTableCell>
-                          <StyledTableCell> Faculty </StyledTableCell>
+                          <StyledTableCell> Drop </StyledTableCell>
+                          <StyledTableCell> Class</StyledTableCell>
+                          <StyledTableCell> Description </StyledTableCell>
                           <StyledTableCell> Day </StyledTableCell>
-                          <StyledTableCell> Time </StyledTableCell>
+                          <StyledTableCell> Times </StyledTableCell>
                           <StyledTableCell> Room </StyledTableCell>
-                          <StyledTableCell> Capacity </StyledTableCell>
-                          <StyledTableCell> Enrolled </StyledTableCell>
+                          <StyledTableCell> Instructor </StyledTableCell>
+                          <StyledTableCell> Units </StyledTableCell>
+                          <StyledTableCell> Status </StyledTableCell>
+                          {/* <StyledTableCell> Status </StyledTableCell> */}
                         </TableRow>
                       </TableHead>
                       {this.state.loading ? 
@@ -366,24 +498,29 @@ class SearchCourses extends Component {
                               <StyledTableCell> <Skeleton width={'100%'} height={'100%'}></Skeleton> </StyledTableCell>
                               <StyledTableCell> <Skeleton width={'100%'} height={'100%'}></Skeleton> </StyledTableCell>
                               <StyledTableCell> <Skeleton width={'100%'} height={'100%'}></Skeleton> </StyledTableCell>
-                              <StyledTableCell> <Skeleton width={'100%'} height={'100%'}></Skeleton> </StyledTableCell>
-                              <StyledTableCell> <Skeleton width={'100%'} height={'100%'}></Skeleton> </StyledTableCell>
+                              {/* <StyledTableCell> <Skeleton width={'100%'} height={'100%'}></Skeleton> </StyledTableCell> */}
                             </StyledTableRow>
                           ))}
                       </TableBody>
                       : 
                       <TableBody>
-                        {this.state.siteData.map(row => (
-                          <StyledTableRow key={row.classNmbr} style={(row.capacity == row.enrolled) ? {color: "#0099CC"} : {color: "#006600"}}>
-                            <StyledTableCell style={(row.capacity <= row.enrolled) ? {color: "#0099CC"} : {color: "#006600"}}> {row.classNmbr} </StyledTableCell>
-                            <StyledTableCell style={(row.capacity <= row.enrolled) ? {color: "#0099CC"} : {color: "#006600"}}> {row.course} </StyledTableCell>
-                            <StyledTableCell style={(row.capacity <= row.enrolled) ? {color: "#0099CC"} : {color: "#006600"}}> {row.section} </StyledTableCell>
-                            <StyledTableCell style={(row.capacity <= row.enrolled) ? {color: "#0099CC"} : {color: "#006600"}}> {row.faculty} </StyledTableCell>
-                            <StyledTableCell style={(row.capacity <= row.enrolled) ? {color: "#0099CC"} : {color: "#006600"}}> {row.day} </StyledTableCell>
-                            <StyledTableCell style={(row.capacity <= row.enrolled) ? {color: "#0099CC"} : {color: "#006600"}}> {row.startTime} - {row.endTime} </StyledTableCell>
-                            <StyledTableCell style={(row.capacity <= row.enrolled) ? {color: "#0099CC"} : {color: "#006600"}}> {row.room} </StyledTableCell>
-                            <StyledTableCell align="right" style={(row.capacity <= row.enrolled) ? {color: "#0099CC"} : {color: "#006600"}}> {row.capacity} </StyledTableCell>
-                            <StyledTableCell align="right" style={(row.capacity <= row.enrolled) ? {color: "#0099CC"} : {color: "#006600"}}> {row.enrolled} </StyledTableCell>
+                        {this.state.added.map(row => (
+                          <StyledTableRow key={row.classNmbr}>
+                            <StyledTableCell>
+                              <IconButton onClick={() => this.dropButton(row.classNmbr)} aria-label="delete">
+                                <DeleteIcon />
+                              </IconButton> 
+                            </StyledTableCell>
+                            <StyledTableCell> {row.course + ' ' + row.section + ' (' + row.classNmbr + ')'} </StyledTableCell>
+                            <StyledTableCell> {} </StyledTableCell>
+                            <StyledTableCell> {row.day} </StyledTableCell>
+                            <StyledTableCell> {row.startTime} - {row.endTime} </StyledTableCell>
+                            <StyledTableCell> {row.room} </StyledTableCell>
+                            <StyledTableCell> Staff </StyledTableCell>
+                            <StyledTableCell>  </StyledTableCell>
+                            <StyledTableCell>  </StyledTableCell>
+                            {/* <StyledTableCell align="right" style={(row.capacity <= row.enrolled) ? {color: "#0099CC"} : {color: "#006600"}}> {row.capacity} </StyledTableCell> */}
+                            {/* <StyledTableCell align="right" style={(row.capacity <= row.enrolled) ? {color: "#0099CC"} : {color: "#006600"}}> {row.enrolled} </StyledTableCell> */}
                           </StyledTableRow>
                         ))}
                       </TableBody>
