@@ -1,0 +1,78 @@
+.cardPanel {
+    border: none;
+}
+
+.panelItem {
+    height: 50px;
+    width: 500px;
+    white-space: normal;
+    color: #212529;
+}
+
+.panelItem:disabled {
+    color: #212529;
+}
+
+.panelItem:focus {
+    background-color: #F6F7F8;
+}
+
+.panelItem:hover {
+    background-color: #F6F7F8;
+}
+
+.marginRightSeparator {
+    margin-right: 10px;
+}
+
+#searchFriendsInput {
+    width: 300px;
+}
+
+.dropdownHeader {
+    text-align: center;
+    padding: 10px;
+    
+}
+
+#headerSticky{
+    position: sticky;
+    top: 0;
+    z-index: 999;
+    background-color: white;
+}
+
+#dropdownMenu {
+    height: auto;
+    width: 500px;
+    max-height: 200px;
+    overflow-x: hidden;
+}
+
+.dropdownOption {
+    color: #505050;
+    margin: 5%;
+}
+
+.dropdownOption:hover {
+    color: #006A4E;
+}
+
+#activeOption {
+    color: #006A4E;
+    font-weight: bold;
+}
+
+#dropdownFooter {
+    color: #006A4E;
+}
+
+.friendItem{
+    text-decoration: none;
+    color: black
+}
+
+.friendItem:hover{
+    color: gray;
+    text-decoration: none;
+}

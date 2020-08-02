@@ -1,0 +1,65 @@
+.genSchedInfoContainer{
+    padding: "20px";
+    margin: "20px";
+}
+
+.courseInputContainer{
+    padding: "20px";
+    margin: "20px";
+    
+}
+
+.RowSchedInfoContainer{
+    padding: "20px";
+    margin: "20px";
+
+}
+
+.priorityTitle{
+    margin-right: 100px;
+}
+
+.DnDContainer{
+    margin-top: 40px;
+/*
+    margin-left: 10em;
+    margin-right: 10em;
+*/
+    margin-left: 30vh;
+    margin-right: 30vh;   
+}
+
+.paginationContainer{
+    margin-top: 35px;
+}
+
+.page-link{
+    color:#5b8c85;
+}
+
+.page-item.active .page-link {
+    background-color: #5b8c85;
+    border-color: #5b8c85;
+}
+
+.schedButton{
+    border-radius: 25px;
+    padding: 10px;
+    padding-left: 30px;
+    padding-right: 30px;
+    background-color: #16775D;
+    /* background-image: linear-gradient(-20deg, #134E5E, #71B280); */
+    border: none;
+    color: white;
+    box-shadow: 6px 5px #e8f4ea;
+    border-style: solid;
+    border-color: #16775D;
+    margin-top: 20px;
+}
+
+.schedButton:hover{
+    background-color: white;
+    color: #16775D;
+}
+
+

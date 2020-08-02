@@ -1,0 +1,32 @@
+a.backBtn:hover{
+    color: "#d3d3d3";
+}
+
+.backBtn:hover{
+    color: "#d3d3d3";
+}
+
+
+.paginationContainer{
+    margin-top: 35px;
+}
+
+.page-link{
+    color:#5b8c85;
+}
+
+.page-item.active .page-link {
+    background-color: #5b8c85;
+    border-color: #5b8c85;
+}
+
+.scheduleContent{
+    height: 83em;
+}
+
+.viewCoursesHome{
+    width: 49%;
+    margin-top: 20px;
+    position: absolute;
+}
+

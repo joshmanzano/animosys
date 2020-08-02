@@ -1,0 +1,61 @@
+{
+  "name": "frontend",
+  "version": "0.1.0",
+  "private": true,
+  "dependencies": {
+    "@date-io/date-fns": "1.x",
+    "@devexpress/dx-react-core": "^2.7.0",
+    "@devexpress/dx-react-scheduler": "^2.7.0",
+    "@devexpress/dx-react-scheduler-material-ui": "^2.7.0",
+    "@magic-words/canvas2image": "^2.0.0",
+    "@material-ui/core": "^4.11.0",
+    "@material-ui/icons": "^4.9.1",
+    "@material-ui/lab": "^4.0.0-alpha.46",
+    "@material-ui/pickers": "^3.2.10",
+    "axios": "^0.19.2",
+    "bootstrap": "^4.5.0",
+    "bootstrap-icons": "^1.0.0-alpha2",
+    "create-react-app": "^3.4.1",
+    "date-fns": "^2.11.1",
+    "express": "^4.17.1",
+    "express-favicon": "^2.0.1",
+    "flowpoints": "^1.0.18",
+    "group-array": "^1.0.0",
+    "html2canvas": "^1.0.0-rc.5",
+    "intro.js": "^2.9.3",
+    "intro.js-react": "^0.2.0",
+    "react": "^16.6.3",
+    "react-avatar": "^3.9.7",
+    "react-bootstrap": "^1.0.0-beta.17",
+    "react-dom": "^16.6.3",
+    "react-inline-editing": "^1.0.10",
+    "react-js-pagination": "^3.0.3",
+    "react-loading": "^2.0.3",
+    "react-router": "^5.2.0",
+    "react-router-dom": "^5.1.2",
+    "react-router-hash-link": "^2.0.0",
+    "react-scripts": "^3.4.1",
+    "react-scroll": "^1.7.16",
+    "react-smooth-dnd": "^0.11.1",
+    "react-window": "^1.8.5",
+    "reactstrap": "^8.5.1",
+    "simple-flexbox": "^2.3.1",
+    "underscore": "^1.10.2"
+  },
+  "scripts": {
+    "start": "node server.js",
+    "build": "react-scripts build",
+    "test": "react-scripts test",
+    "eject": "react-scripts eject"
+  },
+  "eslintConfig": {
+    "extends": "react-app"
+  },
+  "browserslist": [
+    ">0.2%",
+    "not dead",
+    "not ie <= 11",
+    "not op_mini all"
+  ],
+  "devDependencies": {}
+}

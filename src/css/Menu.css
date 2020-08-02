@@ -1,0 +1,22 @@
+/* .img-responsive {
+    height: auto;
+    width: auto;
+    max-height: 30px;
+    max-width: 250px;
+}
+
+#notifBell{
+    max-height: 28px;
+} */
+
+#profileLink {
+    padding-right: 5px;
+}
+
+.color-nav { 
+    background-color: #006A4E; 
+} 
+
+.active{
+    color:white;
+}

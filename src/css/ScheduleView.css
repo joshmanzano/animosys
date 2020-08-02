@@ -1,0 +1,26 @@
+.dx-react-scheduler-date-table-cell, .dx-react-scheduler-header-panel-cell {  
+    width: 20px !important;  
+}  
+
+.dx-react-scheduler-cell-sizes-horizontal {
+    width: 10px !important;
+}
+
+.dx-react-scheduler-cell-sizes-vertical {
+    height: 10px !important;
+}
+
+
+.dx-react-scheduler .dx-react-scheduler-date-table-cell {  
+    min-width: 100px;  
+}  
+
+.dx-react-scheduler-date-table-cell {  
+    height: 30px;  
+}  
+.dx-react-scheduler-time-panel-cell {  
+    height: 60px;  
+}  
+.dx-react-scheduler-time-panel {  
+    margin-top: -30px;  
+}  

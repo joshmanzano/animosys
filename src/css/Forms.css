@@ -1,0 +1,115 @@
+body {
+    font-family: "Lato", sans-serif;
+}
+
+
+
+.main-head{
+    height: 150px;
+    background: #FFF;
+   
+}
+
+.sidenav {
+    height: 100%;
+    background-color: #006A4E;
+    overflow-y: hidden;
+    padding-top: 20px;
+}
+
+
+.sidenav-main {
+    padding: 0px 10px;
+}
+
+@media screen and (max-height: 450px) {
+    .sidenav {padding-top: 15px;}
+}
+
+@media screen and (max-width: 450px) {
+    .login-form{
+        margin-top: 10%;
+    }
+
+    .register-form{
+        margin-top: 10%;
+    }
+}
+
+@media screen and (min-width: 768px){
+    .sidenav-main{
+        margin-left: 23%; 
+    }
+
+    .sidenav{
+        width: 20%;
+        position: fixed;
+        z-index: 1;
+        top: 0;
+        left: 0;
+    }
+
+    .login-form{
+        margin-top: 0%;
+    }
+
+    .register-form{
+        margin-top: 20%;
+    }
+}
+
+
+.login-main-text{
+    margin-top: 20%;
+    padding: 60px;
+    color: #fff;
+}
+
+.login-main-text h2{
+    font-weight: 300;
+}
+
+.btn-black{
+    background-color: #000 !important;
+    color: #fff;
+}
+
+#signup-message{
+    text-align: right;
+}
+
+.sidenav #upper {
+    min-width: 10%;
+    max-width: 10%;
+    position: absolute;
+    left: 5%;
+    top: 5%;
+}
+
+.sidenav #lower {
+    min-width: 100%;
+    max-width: 100%;
+    position: absolute;
+    left: 0;
+    bottom: 0;
+}
+
+.error {
+    margin-left: 5px;
+    font-size: 13px;
+    color: red;
+  }
+
+.backBtn{
+    color: white !important;
+    margin-top: 10px;
+}
+
+.backBtn:hover{
+    color: "#d3d3d3" !important;
+    text-decoration: none !important;
+}
+
+.jumboClass{
+    padding: 32 !important;
+}

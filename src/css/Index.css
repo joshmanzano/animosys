@@ -1,0 +1,191 @@
+import './fonts/VarelaRound-Regular.ttf'
+
+@font-face {
+  font-family: 'Varela Round';
+  font-style: normal;
+  font-weight: 400;
+  src: local('Varela Round'), url(/fonts/VarelaRound-Regular.ttf) format('truetype');
+    
+/*    font-family: 'Varela';*/
+/*  font-style: normal;*/
+/*  font-weight: 400;*/
+/*  src: url('./fonts/VarelaRound-Regular.ttf');*/
+}
+
+.sidemenuHome {
+    height: 600px;
+    /* overflow-y: hidden; */
+    padding-top: 10%;
+
+    width: 13%;
+    position: fixed;
+    position: absolute;
+    z-index: 1;
+
+
+    /* margin: 7px; */
+
+    /* background-color: white; */
+}
+
+.sidemenu-mainHome {
+    margin-left: 23%;
+    display: block;
+}
+
+.change-term-sched {
+    margin-top: 3%;
+    margin-bottom: 3%;
+}
+
+.savedSchedContent{
+    min-width: 100%;
+    padding: 10px;
+    margin: 10px;
+    /* min-height: 770px; */
+    height: 100%;
+    overflow: hidden;
+}
+
+.savedSchedContent:after {
+    content: "";
+    clear: both;
+    display: table;
+  }
+
+
+.optionList{
+    /* height: 600px; */
+    width: 25%;
+    font-size: 90%;
+    position: fixed;
+    margin-top: 75px;
+    /* margin-right: 20px; */
+    /* padding-left: 5px; */
+    padding-bottom: 5px;
+    top:0;
+    /* right: 0; */
+    padding-top: 9%;
+    
+}
+
+.option-choices {
+    margin-top: 3%;
+    margin-bottom: 3%;
+    width: 160px;
+    border-radius: 20px; 
+   
+}
+
+.viewCourses{
+    width: 65%;
+    margin-top: 20px;
+    position: absolute;
+}
+
+.viewCoursesHomepage{
+    width: 65%;
+    margin-top: 20px;
+    position: absolute;
+}
+
+.savedSchedContent{
+/*    width: 800px;*/
+    height: auto;
+}
+
+.paginationContainer{
+    margin-top: 35px;
+}
+
+.page-link{
+    color:#5b8c85;
+}
+
+.page-item.active .page-link {
+    background-color: #5b8c85;
+    border-color: #5b8c85;
+}
+
+.gridLayoutContainer {
+    position: absolute;
+    /* width: 100%; */
+    height: 100%;
+    overflow-y: auto;
+    /* border: 1px solid #aaa; */
+    background-color: #B8D4CD;
+    top: 61%;
+    transform: translate(-50%, -50%);
+    left: 48%;
+}
+
+
+
+.landingpage{
+    /* background-image: url(../assets/Gradient_BG.png); */
+    /* height: 100%;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: cover; */
+    margin-right: 40px;
+    margin-left: 40px;
+    margin-top: 30px;
+    color: white;
+    margin-bottom: auto;
+}
+
+.iconStyle{
+    height: 13vh;
+/*
+    height: 70px;
+    width: 70px;
+*/
+}
+
+.whiteBlob{
+    background-image: url(../assets/whiteBlob.png);
+    position: absolute;
+    right: 0px;
+    bottom: 0px;
+    height: 100%;
+    background-size: cover;
+}
+
+.sectionStyle{
+    width: 100%;
+    height: 100%;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: cover;
+}
+
+.MuiGrid-root makeStyles-container-31 MuiGrid-container MuiGrid-direction-xs-column MuiGrid-wrap-xs-nowrap{
+    width: 500px;
+    height: 500px;
+}
+
+.savedContent{
+    height: 85em;
+    /* width: 100vh;
+    margin-right: 20px;
+    margin-left: 20px;
+    justify-content: center;
+    align-items: center; */
+}
+
+
+.gridSavedContent:after{
+    content: "";
+    display: table;
+    clear: both;
+}
+
+.edit-current-classes-container{
+    border: 2px solid #16775D;
+    padding: 10px;
+    margin-bottom: 15px;
+}
+
+*{
+    font-family: 'Varela Round', sans-serif !important;
+}

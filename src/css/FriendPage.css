@@ -1,0 +1,74 @@
+.friendMenu {
+    height: 100%;
+    overflow-y: hidden;
+    width: 20%;
+    position: fixed;
+    background-color: white;
+}
+
+.titleRow {
+    overflow: hidden;
+    padding: 10%;  
+    height: 30%;
+}
+
+#loweeer {
+    height: 80%;
+    width: 80%;
+    object-fit: contain;
+    bottom: 0px;
+    background-position: right bottom;
+}
+
+.friendName {
+    margin-top: 10px;
+    height: 20%;
+}
+
+.friendDetails {
+    display: flex;
+}
+
+.dataColumn {
+    float: left;
+}
+
+#actualDetails {
+    width: 65%;
+}
+
+#imgDesign {
+    width: 35%;
+}
+
+
+.nav-tabs .nav-link {
+    color: #505050 !important;
+}
+
+.nav-tabs .nav-item.show .nav-link, .nav-tabs .nav-link.active {
+    color: #006A4E !important;
+    font-weight: bold !important;
+}
+
+/* .friend_btn span.btn_content{
+    position: relative;
+    content: "Friend";
+}
+
+.friend_btn:hover span.btn_content{
+    display: none;
+}
+
+.friend_btn:hover span.btn_content:before{
+    position: relative;
+    content: "Unriend";
+} */
+
+.sidemenu-main{
+    color:black;
+}
+
+.svgUnfriend:hover{
+    fill: gray;
+}

@@ -1,0 +1,5 @@
+.boxinfoContainer{
+    height: 400px;
+    width: 250px;
+    overflow: auto;
+}

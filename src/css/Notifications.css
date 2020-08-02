@@ -1,0 +1,44 @@
+#dropdownMenu {
+    height: auto;
+    width: 500px;
+    max-height: 200px;
+    overflow-x: hidden;
+}
+
+#notifSettings {
+    text-align: right;
+    padding: 10px;
+/*
+    padding-left: 10px;
+    padding-right: 10px;
+    padding-top: 5px;
+    padding-bottom: 5px;
+*/
+}
+
+#headerLink {
+    color: #006A4E;
+}
+
+.notifItem {
+    height: auto;
+    white-space: normal;
+    padding: 0px 10px;
+}
+
+.notifItem:disabled {
+    color: #212529;
+}
+
+#notifDate {
+    font-size: 10px;
+    margin-left: 5px;
+    margin-right: 5px;
+}
+
+.headerSticky{
+    position: sticky;
+    top: 0;
+    z-index: 999;
+    background-color: white;
+}
