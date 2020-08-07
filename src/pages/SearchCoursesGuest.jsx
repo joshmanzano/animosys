@@ -37,6 +37,8 @@ import Switch from '@material-ui/core/Switch';
 import { TextField } from "@material-ui/core";
 import IconButton from '@material-ui/core/IconButton';
 import DeleteIcon from '@material-ui/icons/Delete';
+import Snackbar from '@material-ui/core/Snackbar';
+import Alert from '@material-ui/lab/Alert';
 
 const styles = theme => ({
   root: {
@@ -104,13 +106,22 @@ class SearchCourses extends Component {
         searchedCourse: '',
         toAdd: [],
         added: [],
-        allAdd: []
+        addedNums: [],
+        snackBar: false,
+        snackBarText: '',
+        idnum: localStorage.getItem('idnum'),
+        openModal: false
       }
       this.radioRef = React.createRef()
+
     }
 
     componentDidMount(){
         this.setState({dataReceived: true})
+        this.setState({openModal: this.state.idnum == null}, () => {
+          console.log('hello there')
+          console.log(this.state.openModal)
+        })
         const newAll = []
         const toAdd = JSON.parse(localStorage.getItem('toAdd'))
         if(toAdd != undefined){
@@ -133,6 +144,9 @@ class SearchCourses extends Component {
         this.setState({allAdd: newAll})
     }
 
+    handleCloseSnackBar = () => {
+      this.setState({snackBar: false})
+    }
     createData(classNmbr, course, section, faculty, day, startTime, endTime, room, capacity, enrolled) {
       return { classNmbr, course, section, faculty, day, startTime, endTime, room, capacity, enrolled };
     }
@@ -145,8 +159,6 @@ class SearchCourses extends Component {
 
     enlistCourses = (c) =>{
       //start loading
-
-
         this.setState({loading: true})
         // this.setState({siteData: []})
         axios.get('https://archerone-backend.herokuapp.com/api/getclass/'+c+'/')
@@ -253,6 +265,13 @@ class SearchCourses extends Component {
                 if(!(this.state.toAdd.includes(Number(classnumber)))){
                   toAdd.push(classnumber)
                   newAll.push(classnumber)
+                  axios.post('https://archerone-backend.herokuapp.com/api/addcart/', {
+                    classnumber,
+                    idnum: this.state.idnum
+                  })
+                  .then(res => {
+
+                  })
                 }
                 newSiteData.push(offering);
               }
@@ -269,7 +288,7 @@ class SearchCourses extends Component {
         })
 
     }
-    o
+
     handleSearch = (e, val) =>{
       this.setState({selectedCourses: val})
     }
@@ -297,33 +316,47 @@ class SearchCourses extends Component {
 
     enlistButton = () => {
         this.setState({loading: true})
-        axios.post('https://archerone-backend.herokuapp.com/api/checkconflicts/', {
-          classnumbers: this.state.allAdd
-        })
-        .then(res => {
-          if(res.data){
-            console.log("true")
-            const newAdded = this.state.siteData
-            const newAll = this.state.allAdd
-            this.state.added.map(a => {
-              newAdded.push(a)
-              newAll.push(a.classNmbr)
-            })
-            this.setState({added: newAdded, allAdd: newAll}, () => {
-              localStorage.setItem('added', JSON.stringify(newAdded))
-              localStorage.removeItem('toAdd')
-              this.setState({siteData: []})
-              this.setState({toAdd: []})
-              this.setState({loading: false})
-            })
-          }else{
-            console.log("false")
+        const addedNums = this.state.addedNums
+        const removeNums = []
+        this.state.toAdd.map(add => {
+          addedNums = this.state.addedNums
+          addedNums.push(add.classNmbr)
+          axios.post('https://archerone-backend.herokuapp.com/api/checkconflicts/', {
+            classnumbers: addedNums,
+            idnum: this.state.idnum 
+          })
+          .then(res => {
+            if(res.data){
+              console.log("true")
+              removeNums.append(add.classNmbr)
+              const newAdded = this.state.siteData
+              this.state.added.map(a => {
+                newAdded.push(a)
+              })
+              this.setState({added: newAdded, addedNums}, () => {
+                localStorage.setItem('added', JSON.stringify(newAdded))
+                // this.setState({siteData: []})
+                this.setState({loading: false})
+              })
+            }else{
+              console.log("false")
+              this.setState({snackBarText: 'Conflicts found.'});
+              this.setState({snackBar: true});
+              this.setState({loading: false});
+            }
+          }).catch(err => {
+            console.log(err.response)
             this.setState({loading: false});
-          }
-        }).catch(err => {
-          console.log(err.response)
-          this.setState({loading: false});
+          })
         })
+        const toAdd = [];
+        this.state.toAdd.map(add => {
+          if(!removeNums.includes(add)){
+            toAdd.push(add)
+          }
+        })
+        this.setState({toAdd})
+        
     }
 
     deleteButton = (classnumber) => {
@@ -345,6 +378,13 @@ class SearchCourses extends Component {
       })
       this.setState({toAdd: newToAdd})
       this.setState({allAdd: newAll})
+      axios.post('https://archerone-backend.herokuapp.com/api/removecart/',{
+        classnumber,
+        idnum: this.state.idnum
+      })
+      .then(res => {
+
+      })
       localStorage.setItem('toAdd', JSON.stringify(newToAdd))
     }
     dropButton = (classnumber) => {
@@ -367,6 +407,20 @@ class SearchCourses extends Component {
     }
     onChangeSearch = (e) => {
       this.setState({searchedCourse: e.target.value})
+    }
+
+    toggleModal = () => {
+
+    }
+
+    handleLogin = () => {
+      this.setState({idnum: this.state.idnumValue})
+      localStorage.setItem('idnum',this.state.idnumValue)
+      this.setState({openModal: false})
+    }
+
+    handleChange = (e) => {
+      this.setState({idnumValue: e.target.value})
     }
 
     render() {
@@ -395,9 +449,9 @@ class SearchCourses extends Component {
           <div>
             {this.props.menu('search_courses')}
 
-            {this.state.dataReceived ? 
+            {(this.state.idnum != null) ? 
             <div className="search-container">
-                <div className="searchBar">
+                <div className="searcundehBar">
                   <h2>Add Classes</h2>
                 </div>
                 <hr class="solid"></hr>
@@ -553,9 +607,26 @@ class SearchCourses extends Component {
                 </div>
             </div>
             : 
-            <div style={{display: "flex", justifyContent: "center", alignItems: "center", minHeight: "80vh"}}>
-              <ReactLoading type={'spin'} color={'#9BCFB8'} height={'5%'} width={'5%'}/>
-            </div> }
+            <Modal isOpen={this.state.openModal} toggle={this.toggleModal} returnFocusAfterClose={false} backdrop={true} data-keyboard="false" >
+              <ModalHeader toggle={this.toggleModal}></ModalHeader>
+              <ModalBody>
+                <div className="searchBarEdit">
+                  <h5>Enter your ID Number:</h5>                              
+                    <div style={{display: "flex", justifyContent: "center", width: "-webkit-fill-available", marginBottom: "15px"}}>
+                      <TextField value={this.state.idnumValue} onChange={this.handleChange}></TextField>
+                    </div>
+                </div>
+              </ModalBody>
+              <ModalFooter>
+                <Button color="primary" onClick={this.handleLogin}>Login</Button>{' '}
+              </ModalFooter>
+            </Modal> 
+            }
+            <Snackbar open={this.state.snackBar} autoHideDuration={4000} onClose={this.handleCloseSnackBar}>
+              <Alert onClose={this.handleCloseSnackBar} severity="error">
+                {this.state.snackBarText}
+              </Alert>
+            </Snackbar>
         </div>        
       );
     }

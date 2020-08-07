@@ -153,11 +153,10 @@ class App extends Component {
   }
 
   handle_logout = () => {
-    localStorage.removeItem('token');
-    localStorage.removeItem('first_name');
-    localStorage.removeItem('last_name');
-    localStorage.removeItem('id_num');
-    localStorage.removeItem('hints');
+    localStorage.removeItem('idnum');
+    localStorage.removeItem('allAdd');
+    localStorage.removeItem('added');
+    localStorage.removeItem('toAdd');
     this.setState({
       logged_in: false,
       first_name: '',
@@ -165,7 +164,7 @@ class App extends Component {
       id_num: '',
     });
     return (
-      <Redirect to="/login" />
+      <Redirect to="/" />
     );
   }
 
