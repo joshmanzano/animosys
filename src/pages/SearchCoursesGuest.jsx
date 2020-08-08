@@ -268,9 +268,9 @@ class SearchCourses extends Component {
                   axios.post('https://archerone-backend.herokuapp.com/api/addcart/', {
                     classnumber,
                     idnum: this.state.idnum
-                  })
-                  .then(res => {
-
+                  }).then(res => {
+                  }).catch(err => {
+                    console.log(err.response)
                   })
                 }
                 newSiteData.push(offering);
@@ -314,28 +314,70 @@ class SearchCourses extends Component {
 
     }
 
+    // enlistButton = () => {
+    //     this.setState({loading: true})
+    //     var addedNums = this.state.addedNums
+    //     var removeNums = []
+    //     this.state.toAdd.map(add => {
+    //       addedNums = this.state.addedNums
+    //       addedNums.push(add.classNmbr)
+    //       axios.post('https://archerone-backend.herokuapp.com/api/checkconflicts/', {
+    //         classnumbers: addedNums,
+    //         idnum: this.state.idnum 
+    //       })
+    //       .then(res => {
+    //         if(res.data){
+    //           console.log("true")
+    //           removeNums.append(add.classNmbr)
+    //           const newAdded = this.state.siteData
+    //           this.state.added.map(a => {
+    //             newAdded.push(a)
+    //           })
+    //           this.setState({added: newAdded, addedNums}, () => {
+    //             localStorage.setItem('added', JSON.stringify(newAdded))
+    //             // this.setState({siteData: []})
+    //             this.setState({loading: false})
+    //           })
+    //         }else{
+
+    //         }
+    //       }).catch(err => {
+    //         console.log(err.response)
+    //         this.setState({loading: false});
+    //       })
+    //     })
+    //     const toAdd = [];
+    //     this.state.toAdd.map(add => {
+    //       if(!removeNums.includes(add)){
+    //         toAdd.push(add)
+    //       }
+    //     })
+    //     this.setState({toAdd})
+        
+    // }
+
     enlistButton = () => {
-        this.setState({loading: true})
-        const addedNums = this.state.addedNums
-        const removeNums = []
-        this.state.toAdd.map(add => {
-          addedNums = this.state.addedNums
-          addedNums.push(add.classNmbr)
+      this.setState({loading: true})
+      console.log(this.state.idnum)
+      axios.get('https://archerone-backend.herokuapp.com/api/checkenlist/'+this.state.idnum).then(res => {
+        if(res.data){
           axios.post('https://archerone-backend.herokuapp.com/api/checkconflicts/', {
-            classnumbers: addedNums,
-            idnum: this.state.idnum 
+            classnumbers: this.state.allAdd
           })
           .then(res => {
             if(res.data){
               console.log("true")
-              removeNums.append(add.classNmbr)
               const newAdded = this.state.siteData
+              const newAll = this.state.allAdd
               this.state.added.map(a => {
                 newAdded.push(a)
+                newAll.push(a.classNmbr)
               })
-              this.setState({added: newAdded, addedNums}, () => {
+              this.setState({added: newAdded, allAdd: newAll}, () => {
                 localStorage.setItem('added', JSON.stringify(newAdded))
-                // this.setState({siteData: []})
+                localStorage.removeItem('toAdd')
+                this.setState({siteData: []})
+                this.setState({toAdd: []})
                 this.setState({loading: false})
               })
             }else{
@@ -348,15 +390,15 @@ class SearchCourses extends Component {
             console.log(err.response)
             this.setState({loading: false});
           })
-        })
-        const toAdd = [];
-        this.state.toAdd.map(add => {
-          if(!removeNums.includes(add)){
-            toAdd.push(add)
-          }
-        })
-        this.setState({toAdd})
-        
+        }else{
+          this.setState({snackBarText: 'You cannot enlist at this time.'});
+          this.setState({snackBar: true});
+          this.setState({loading: false});
+        }
+      }).catch(err => {
+        console.log(err.response)
+
+      })
     }
 
     deleteButton = (classnumber) => {
