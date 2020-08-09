@@ -268,7 +268,8 @@ class SearchCourses extends Component {
                   newAll.push(classnumber)
                   axios.post('https://archerone-backend.herokuapp.com/api/addcart/', {
                     classnumber,
-                    idnum: this.state.idnum
+                    idnum: this.state.idnum,
+                    name: this.state.name,
                   }).then(res => {
                   }).catch(err => {
                     console.log(err.response)
