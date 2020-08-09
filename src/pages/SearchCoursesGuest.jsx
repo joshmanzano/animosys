@@ -110,6 +110,7 @@ class SearchCourses extends Component {
         snackBar: false,
         snackBarText: '',
         idnum: localStorage.getItem('idnum'),
+        name: localStorage.getItem('name'),
         openModal: false
       }
       this.radioRef = React.createRef()
@@ -470,12 +471,17 @@ class SearchCourses extends Component {
 
     handleLogin = () => {
       this.setState({idnum: this.state.idnumValue})
+      this.setState({name: this.state.nameValue})
       localStorage.setItem('idnum',this.state.idnumValue)
+      localStorage.setItem('name',this.state.nameValue)
       this.setState({openModal: false})
     }
 
     handleChange = (e) => {
       this.setState({idnumValue: e.target.value})
+    }
+    handleNameChange = (e) => {
+      this.setState({nameValue: e.target.value})
     }
 
     render() {
@@ -669,6 +675,10 @@ class SearchCourses extends Component {
                   <h5>Enter your ID Number:</h5>                              
                     <div style={{display: "flex", justifyContent: "center", width: "-webkit-fill-available", marginBottom: "15px"}}>
                       <TextField value={this.state.idnumValue} onChange={this.handleChange}></TextField>
+                    </div>
+                  <h5>Enter your name:</h5>                              
+                    <div style={{display: "flex", justifyContent: "center", width: "-webkit-fill-available", marginBottom: "15px"}}>
+                      <TextField value={this.state.nameValue} onChange={this.handleNameChange}></TextField>
                     </div>
                 </div>
               </ModalBody>
