@@ -361,35 +361,48 @@ class SearchCourses extends Component {
       console.log(this.state.idnum)
       axios.get('https://archerone-backend.herokuapp.com/api/checkenlist/'+this.state.idnum).then(res => {
         if(res.data){
-          axios.post('https://archerone-backend.herokuapp.com/api/checkconflicts/', {
-            classnumbers: this.state.allAdd
-          })
-          .then(res => {
-            if(res.data){
-              console.log("true")
-              const newAdded = this.state.siteData
-              const newAll = this.state.allAdd
-              this.state.added.map(a => {
-                newAdded.push(a)
-                newAll.push(a.classNmbr)
-              })
-              this.setState({added: newAdded, allAdd: newAll}, () => {
-                localStorage.setItem('added', JSON.stringify(newAdded))
-                localStorage.removeItem('toAdd')
-                this.setState({siteData: []})
-                this.setState({toAdd: []})
-                this.setState({loading: false})
-              })
-            }else{
-              console.log("false")
-              this.setState({snackBarText: 'Conflicts found.'});
-              this.setState({snackBar: true});
-              this.setState({loading: false});
+          var closedClasses = false;
+          this.state.siteData.map(row => {
+            if(row.capacity <= row.enrolled){
+              closedClasses = true;
             }
-          }).catch(err => {
-            console.log(err.response)
-            this.setState({loading: false});
           })
+          if(closedClasses){
+            this.setState({snackBarText: 'One of your classes are closed.'});
+            this.setState({snackBar: true});
+            this.setState({loading: false});
+          }else{
+            axios.post('https://archerone-backend.herokuapp.com/api/checkconflicts/', {
+              classnumbers: this.state.allAdd
+            })
+            .then(res => {
+              if(res.data){
+                console.log("true")
+                const newAdded = this.state.siteData
+                const newAll = this.state.allAdd
+                this.state.added.map(a => {
+                  newAdded.push(a)
+                  newAll.push(a.classNmbr)
+                })
+                this.setState({added: newAdded, allAdd: newAll}, () => {
+                  localStorage.setItem('added', JSON.stringify(newAdded))
+                  localStorage.removeItem('toAdd')
+                  this.setState({siteData: []})
+                  this.setState({toAdd: []})
+                  this.setState({loading: false})
+                })
+              }else{
+                console.log("false")
+                this.setState({snackBarText: 'Conflicts found.'});
+                this.setState({snackBar: true});
+                this.setState({loading: false});
+              }
+            }).catch(err => {
+              console.log(err.response)
+              this.setState({loading: false});
+            })
+          }
+
         }else{
           this.setState({snackBarText: 'You cannot enlist at this time.'});
           this.setState({snackBar: true});
